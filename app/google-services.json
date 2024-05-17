@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "558081333746",
+    "project_id": "vcalling-7d087",
+    "storage_bucket": "vcalling-7d087.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558081333746:android:5239ebf2db9a4f14c0b36b",
+        "android_client_info": {
+          "package_name": "com.example.vcalling"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-xyvAGL84_ppZkU3iktPpiyIPzOJty2o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
