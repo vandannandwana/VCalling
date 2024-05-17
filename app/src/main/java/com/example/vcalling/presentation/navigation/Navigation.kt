@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,11 +16,10 @@ import com.example.vcalling.presentation.viewmodel.UserProfileViewModel
 
 @Composable
 fun Navigation(
-//    lifecycleOwner: LifecycleOwner,
-//                 activity: MainActivity,
-                 context: Context,
-                 innerpadding: PaddingValues,
-                 currentUser: Boolean)
+    lifecycleOwner: LifecycleOwner,
+    context: Context,
+    innerpadding: PaddingValues,
+    currentUser: Boolean)
 {
 
     val userViewModel = hiltViewModel<UserProfileViewModel>()
@@ -54,6 +54,7 @@ fun Navigation(
         composable(NavScreens.HomeScreen.route) {
 
             HomeScreen(
+                lifecycleOwner = lifecycleOwner,
                 context = context,
                 viewModel = userViewModel,
                 onLogoutClick = { navigationController.navigate(NavScreens.LoginScreen.route) }

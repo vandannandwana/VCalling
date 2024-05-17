@@ -83,9 +83,8 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xBE737471)),
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -97,7 +96,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                     TextField(
                         value = name,
                         onValueChange = { name = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         placeholder = { Text(text = "Enter Name") },
@@ -112,7 +111,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                     TextField(
                         value = email,
                         onValueChange = { email = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         placeholder = { Text(text = "Enter Email") },
@@ -127,7 +126,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                     TextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         placeholder = { Text(text = "Enter Phone Number") },
@@ -142,7 +141,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                     TextField(
                         value = age,
                         onValueChange = { age = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         placeholder = { Text(text = "Enter Age") },
@@ -157,7 +156,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                     TextField(
                         value = password,
                         onValueChange = { password = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         shape = RoundedCornerShape(12.dp),
                         placeholder = { Text(text = "Enter Password") },
@@ -171,7 +170,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                     TextField(
                         value = password2,
                         onValueChange = { password2 = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         shape = RoundedCornerShape(12.dp),
                         placeholder = { Text(text = "Enter Password Again") },
@@ -198,7 +197,7 @@ fun SignUpScreen(context: Context, vModel: UserProfileViewModel, onOldUserClick:
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         ElevatedButton(
                             onClick = {

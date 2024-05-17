@@ -5,7 +5,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.firestore
-import com.google.gson.Gson
+//import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,9 +27,9 @@ object FirebaseModule {
         return Firebase.firestore.collection("users")
     }
 
-    @Provides
-    @Singleton
-    fun providesGSon():Gson = Gson()
+//    @Provides
+//    @Singleton
+//    fun providesGSon():Gson = Gson()
 
     @Provides
     @Singleton

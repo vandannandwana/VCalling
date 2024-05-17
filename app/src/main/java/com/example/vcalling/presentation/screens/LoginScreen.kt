@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,7 +62,9 @@ fun LoginScreen(context: Context, innerPadding: PaddingValues, vModel: UserProfi
     }
 
 
-    Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -84,9 +85,8 @@ fun LoginScreen(context: Context, innerPadding: PaddingValues, vModel: UserProfi
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xBE737471)),
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -97,7 +97,7 @@ fun LoginScreen(context: Context, innerPadding: PaddingValues, vModel: UserProfi
                     TextField(
                         value = email,
                         onValueChange = { email = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         placeholder = { Text(text = "Enter Email") },
@@ -111,7 +111,7 @@ fun LoginScreen(context: Context, innerPadding: PaddingValues, vModel: UserProfi
                     TextField(
                         value = password,
                         onValueChange = { password = it },
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         shape = RoundedCornerShape(12.dp),
                         placeholder = { Text(text = "Enter Password") },
@@ -166,7 +166,8 @@ fun LoginScreen(context: Context, innerPadding: PaddingValues, vModel: UserProfi
             Text(
                 text = "Don't have an account? Sign Up",
                 color = Color.Red,
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
                     .clickable {
                         onNewUserClick()
                     }
@@ -218,40 +219,70 @@ fun PhoneVerification(onVerifyClick: () -> Unit, auth: FirebaseAuth, activity: M
         Text(text = "OTP Verification")
         Spacer(modifier = Modifier.height(12.dp))
 
-        TextField(value = mobileNumber, onValueChange = { mobileNumber = it }, label = { Text("Mobile Number") })
-        if (otpSent) {
-            TextField(value = otp, onValueChange = { otp = it }, label = { Text("OTP") })
-        }
-
-        Button(onClick = {
-            if (mobileNumber.isNotEmpty()) {
-                val options = PhoneAuthOptions.newBuilder(auth)
-                    .setPhoneNumber(mobileNumber)
-                    .setTimeout(60L, TimeUnit.SECONDS)
-                    .setActivity(activity)
-                    .setCallbacks(callbacks)
-                    .build()
-                PhoneAuthProvider.verifyPhoneNumber(options)
-            } else {
-                Toast.makeText(context, "Enter mobile number correctly", Toast.LENGTH_SHORT).show()
-            }
-        }) {
-            Text(text = if (otpSent) "Resend OTP" else "Send OTP")
-        }
+            TextField(
+                value = mobileNumber,
+                onValueChange = { mobileNumber = it },
+                label = { Text("Mobile Number") },
+                modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color(0xFF365349),
+                    unfocusedLabelColor = Color.Unspecified,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
+            )
 
         if (otpSent) {
-            Button(onClick = {
-                if (storedVerificationId.isNotEmpty() && otp.isNotEmpty()) {
-                    val credential = PhoneAuthProvider.getCredential(storedVerificationId, otp)
-                    signInWithPhoneAuthCredential(onVerifyClick,auth,activity,credential) { message ->
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                    }
+            TextField(
+                value = otp,
+                onValueChange = { otp = it },
+                label = { Text("OTP") },
+                modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color(0xFF365349),
+                    unfocusedLabelColor = Color.Unspecified,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ))
+        }
+
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
+
+            ElevatedButton(onClick = {
+                if (mobileNumber.isNotEmpty()) {
+                    val options = PhoneAuthOptions.newBuilder(auth)
+                        .setPhoneNumber(mobileNumber)
+                        .setTimeout(60L, TimeUnit.SECONDS)
+                        .setActivity(activity)
+                        .setCallbacks(callbacks)
+                        .build()
+                    PhoneAuthProvider.verifyPhoneNumber(options)
                 } else {
-                    Toast.makeText(context, "Enter OTP", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Enter mobile number correctly", Toast.LENGTH_SHORT).show()
                 }
             }) {
-                Text(text = "Verify OTP")
+                Text(text = if (otpSent) "Resend OTP" else "Send OTP")
             }
+
+            if (otpSent) {
+                ElevatedButton(onClick = {
+                    if (storedVerificationId.isNotEmpty() && otp.isNotEmpty()) {
+                        val credential = PhoneAuthProvider.getCredential(storedVerificationId, otp)
+                        signInWithPhoneAuthCredential(onVerifyClick,auth,activity,credential) { message ->
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Enter OTP", Toast.LENGTH_SHORT).show()
+                    }
+                }) {
+                    Text(text = "Verify OTP")
+                }
+            }
+
         }
     }
 

@@ -24,7 +24,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,9 +31,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,13 +49,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
 import com.example.vcalling.R
-import com.example.vcalling.presentation.states.UserInfoState
+import com.example.vcalling.data.model.UserInfo
 import com.example.vcalling.presentation.viewmodel.UserProfileViewModel
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HomeScreen(
     context: Context,
+    lifecycleOwner: LifecycleOwner,
     viewModel: UserProfileViewModel,
     onLogoutClick: () -> Unit
 ) {
@@ -71,7 +73,17 @@ fun HomeScreen(
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val userState = viewModel.userinfo.collectAsState().value
+
+            var userState by remember {
+                mutableStateOf(UserInfo())
+            }
+
+            LaunchedEffect(key1 = userState, key2 = viewModel) {
+                viewModel.userinfo.observe(lifecycleOwner){user->
+                    userState = user
+                }
+            }
+
 
             Profile(context,userState,viewModel)
 
@@ -90,7 +102,7 @@ fun HomeScreen(
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-private fun Profile(context: Context, userState: UserInfoState, viewModel: UserProfileViewModel) {
+private fun Profile(context: Context, user: UserInfo, viewModel: UserProfileViewModel) {
 
     var onEdit by rememberSaveable {
         mutableStateOf(false)
@@ -152,24 +164,15 @@ private fun Profile(context: Context, userState: UserInfoState, viewModel: UserP
 
         }
 
-        if (userState.isLoading) {
-            CircularProgressIndicator()
-        } else if (userState.errorMessage?.isEmpty() != true) {
-            Text(text = userState.errorMessage.toString())
-        }
-        if (userState.user != null) {
-
-            Text(
-                text = userState.user.name,
-                fontWeight = FontWeight.Black,
-                fontSize = 28.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(20.dp)
-            )
-
-        }
+        Text(
+            text = user.name,
+            fontWeight = FontWeight.Black,
+            fontSize = 28.sp,
+            fontFamily = FontFamily.Serif,
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(20.dp)
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -235,116 +238,111 @@ private fun Profile(context: Context, userState: UserInfoState, viewModel: UserP
         Spacer(modifier = Modifier.height(24.dp))
 
 
+        var name by rememberSaveable {
+            mutableStateOf("")
+        }
 
-        if (userState.user != null) {
+        var email by rememberSaveable {
+            mutableStateOf("")
+        }
 
-            var name by rememberSaveable {
-                mutableStateOf("")
-            }
+        var phone by rememberSaveable {
+            mutableStateOf("")
+        }
 
-            var email by rememberSaveable {
-                mutableStateOf("")
-            }
+        var age by rememberSaveable {
+            mutableStateOf("")
+        }
+        var password by rememberSaveable {
+            mutableStateOf("")
+        }
 
-            var phone by rememberSaveable {
-                mutableStateOf("")
-            }
+        LaunchedEffect(user) {
+            name = user.name
+            email = user.email
+            phone = user.phone
+            age = user.age
+            password = user.password
+        }
 
-            var age by rememberSaveable {
-                mutableStateOf("")
-            }
-            var password by rememberSaveable {
-                mutableStateOf("")
-            }
-
-            LaunchedEffect(userState.user) {
-                name = userState.user.name
-                email = userState.user.email
-                phone = userState.user.phone
-                age = userState.user.age
-                password = userState.user.password
-            }
-
-            TextField(
-                value = name,
-                onValueChange = { name = it },
-                enabled = onEdit,
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                placeholder = { Text(text = "Enter Name") },
-                label = { Text(text = "Your Name") },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color(0xFF365349),
-                    unfocusedLabelColor = Color.Unspecified,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
-
-            )
-            TextField(
-                value = email,
-                onValueChange = { email = it },
-                enabled = onEdit,
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                placeholder = { Text(text = "Enter Email") },
-                label = { Text(text = "Your Email") },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color(0xFF365349),
-                    unfocusedLabelColor = Color.Unspecified,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
+        TextField(
+            value = name,
+            onValueChange = { name = it },
+            enabled = onEdit,
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            placeholder = { Text(text = "Enter Name") },
+            label = { Text(text = "Your Name") },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF365349),
+                unfocusedLabelColor = Color.Unspecified,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             )
 
-            TextField(
-                value = phone,
-                onValueChange = { phone = it },
-                enabled = onEdit,
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                placeholder = { Text(text = "Enter Phone Number") },
-                label = { Text(text = "Your Phone Number") },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color(0xFF365349),
-                    unfocusedLabelColor = Color.Unspecified,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
+        )
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            enabled = onEdit,
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            placeholder = { Text(text = "Enter Email") },
+            label = { Text(text = "Your Email") },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF365349),
+                unfocusedLabelColor = Color.Unspecified,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             )
+        )
 
-            TextField(
-                value = age,
-                onValueChange = { age = it },
-                enabled = onEdit,
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                placeholder = { Text(text = "Enter Age") },
-                label = { Text(text = "Your Age") },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color(0xFF365349),
-                    unfocusedLabelColor = Color.Unspecified,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
+        TextField(
+            value = phone,
+            onValueChange = { phone = it },
+            enabled = onEdit,
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            placeholder = { Text(text = "Enter Phone Number") },
+            label = { Text(text = "Your Phone Number") },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF365349),
+                unfocusedLabelColor = Color.Unspecified,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             )
+        )
 
-            Button(onClick = {onEdit = false;viewModel.updateUserInfo(name = name, password = password, email = email, phone = phone, age = age);viewModel.getUser(viewModel.getUid())}, enabled = onEdit) {
-                Text(text = "Update Details")
-            }
+        TextField(
+            value = age,
+            onValueChange = { age = it },
+            enabled = onEdit,
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            placeholder = { Text(text = "Enter Age") },
+            label = { Text(text = "Your Age") },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF365349),
+                unfocusedLabelColor = Color.Unspecified,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
+        )
 
+        Button(onClick = {onEdit = false;viewModel.updateUserInfo(name = name, password = password, email = email, phone = phone, age = age);viewModel.getUser(viewModel.getUid()!!)}, enabled = onEdit) {
+            Text(text = "Update Details")
         }
 
 

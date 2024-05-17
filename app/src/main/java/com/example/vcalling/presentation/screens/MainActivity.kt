@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     val currentUser = auth.currentUser != null
-                    Navigation(context = this, innerpadding = innerPadding, currentUser = currentUser)
+                    Navigation(lifecycleOwner = this,context = this, innerpadding = innerPadding, currentUser = currentUser)
                 }
             }
         }
